@@ -43,8 +43,9 @@ class AboutDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        f = open('wstyle.txt', 'r')
-        self.style = f.read()
+        #f = open('wstyle.txt', 'r')
+        #self.style = f.read()
+        self.style=open('wstyle.txt', 'r').read()
         self.setStyleSheet(self.style)
         self.tabs = QTabWidget()
         self.tabs.setStyleSheet("background: black; color: silver;")
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow):
 
         navtb.addSeparator()
 
-        self.httpsicon = QLabel()  # Yes, really!
+        self.httpsicon = QLabel()  # ICON of secure connection
         self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-nossl.png')))
         navtb.addWidget(self.httpsicon)
 
@@ -97,9 +98,6 @@ class MainWindow(QMainWindow):
         stop_btn.setStatusTip("Stop loading current page")
         stop_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
         navtb.addAction(stop_btn)
-
-        # Uncomment to disable native menubar on Mac
-        # self.menuBar().setNativeMenuBar(False)
 
         file_menu = self.menuBar().addMenu("&File")
 
@@ -126,15 +124,14 @@ class MainWindow(QMainWindow):
         help_menu = self.menuBar().addMenu("&Help")
 
         about_action = QAction(QIcon(os.path.join('images', 'question.png')), "About WebBrowser", self)
-        # about_action.setStatusTip("Find out more about Mozarella Ashbadger")  # Hungry!
         about_action.triggered.connect(self.about)
         help_menu.addAction(about_action)
 
-        navigate_mozarella_action = QAction(QIcon(os.path.join('images', 'lifebuoy.png')),
+        navigate_action = QAction(QIcon(os.path.join('images', 'lifebuoy.png')),
                                             "Mozarella Ashbadger Homepage", self)
-        navigate_mozarella_action.setStatusTip("Go to Mozarella Ashbadger Homepage")
-        navigate_mozarella_action.triggered.connect(self.navigate_mozarella)
-        help_menu.addAction(navigate_mozarella_action)
+        navigate_action.setStatusTip("Go to Mozarella Ashbadger Homepage")
+        navigate_action.triggered.connect(self.navigate)
+        help_menu.addAction(navigate_action)
         self.searchEnginepath = os.path.abspath(
             os.path.join(os.path.dirname(__file__), 'Homepage', "SearchEngine.html"))
         print(self.searchEnginepath)
@@ -156,8 +153,6 @@ class MainWindow(QMainWindow):
 
         self.tabs.setCurrentIndex(i)
 
-        # More difficult! We only want to update the url when it's from the
-        # correct tab
         browser.urlChanged.connect(lambda qurl, browser=browser:
                                    self.update_urlbar(qurl, browser))
 
@@ -187,8 +182,8 @@ class MainWindow(QMainWindow):
         title = self.tabs.currentWidget().page().title()
         self.setWindowTitle("%s - WebBrowser" % title)
 
-    def navigate_mozarella(self):
-        self.tabs.currentWidget().setUrl(QUrl("https://www.udemy.com/522076"))
+    def navigate(self):
+        self.tabs.currentWidget().setUrl(QUrl("https://atpp.vstu.edu.ru/"))
 
     def about(self):
         dlg = AboutDialog()
@@ -222,9 +217,9 @@ class MainWindow(QMainWindow):
         dlg.exec_()
 
     def navigate_home(self):
-        self.tabs.currentWidget().setUrl(QUrl("http://www.google.com"))
+        self.tabs.currentWidget().setUrl(QUrl(self.searchEnginepath))
 
-    def navigate_to_url(self):  # Does not receive the Url
+    def navigate_to_url(self):
         q = QUrl(self.urlbar.text())
         if q.scheme() == "":
             q.setScheme("http")
@@ -234,15 +229,12 @@ class MainWindow(QMainWindow):
     def update_urlbar(self, q, browser=None):
 
         if browser != self.tabs.currentWidget():
-            # If this signal is not from the current tab, ignore
             return
 
         if q.scheme() == 'https':
-            # Secure padlock icon
             self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-ssl.png')))
 
         else:
-            # Insecure padlock icon
             self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-nossl.png')))
 
         self.urlbar.setText(q.toString())
