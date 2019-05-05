@@ -1,0 +1,1 @@
+start venv\scripts\python.exe browser_tabbed.py
