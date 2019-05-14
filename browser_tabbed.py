@@ -138,6 +138,7 @@ class MainWindow(QMainWindow):
         self.add_new_tab(QUrl.fromLocalFile(self.searchEnginepath), 'SearchgEngine')  # <-------------
 
         self.show()
+        #self.showMaximized()
 
         self.setWindowTitle("WebBrowser")
         self.setWindowIcon(QIcon(os.path.join('images', 'ma-icon-64.png')))
