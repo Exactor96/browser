@@ -128,12 +128,12 @@ class MainWindow(QMainWindow):
         help_menu.addAction(about_action)
 
         navigate_action = QAction(QIcon(os.path.join('images', 'lifebuoy.png')),
-                                            "Mozarella Ashbadger Homepage", self)
-        navigate_action.setStatusTip("Go to Mozarella Ashbadger Homepage")
+                                            "Homepage", self)
+        navigate_action.setStatusTip("Go to Homepage")
         navigate_action.triggered.connect(self.navigate)
         help_menu.addAction(navigate_action)
         self.searchEnginepath = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), 'Homepage', "SearchEngine.html"))
+            os.path.join(os.path.dirname(__file__), 'HomePage', "SearchEngine.html"))
         print(self.searchEnginepath)
         self.add_new_tab(QUrl.fromLocalFile(self.searchEnginepath), 'SearchgEngine')  # <-------------
 
