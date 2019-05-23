@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import *
 
 
 class AboutDialog(QDialog):
+    """Окно о программе"""
     def __init__(self, *args, **kwargs):
         super(AboutDialog, self).__init__(*args, **kwargs)
 
@@ -41,6 +42,7 @@ class AboutDialog(QDialog):
 
 
 class MainWindow(QMainWindow):
+    """Основное окно"""
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         #f = open('wstyle.txt', 'r')
@@ -143,10 +145,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("WebBrowser")
         self.setWindowIcon(QIcon(os.path.join('images', 'ma-icon-64.png')))
 
-    def add_new_tab(self, qurl=None, label="Blank"):  # homepage
-
+    def add_new_tab(self, qurl=None, label="SearchEngine"):  # homepage
+        """Добавление новой вкладки, если пустая, то открывает поиск"""
         if qurl is None:
-            qurl = QUrl('')
+            qurl = QUrl.fromLocalFile(self.searchEnginepath)
 
         browser = QWebEngineView()
         browser.setUrl(qurl)
@@ -161,21 +163,25 @@ class MainWindow(QMainWindow):
                                      self.tabs.setTabText(i, browser.page().title()))
 
     def tab_open_doubleclick(self, i):
+        """Открытие новой вкладки по двойному клику"""
         if i == -1:  # No tab under the click
             self.add_new_tab()
 
     def current_tab_changed(self, i):
+        """Обновление url бара и заголовка окна"""
         qurl = self.tabs.currentWidget().url()
         self.update_urlbar(qurl, self.tabs.currentWidget())
         self.update_title(self.tabs.currentWidget())
 
     def close_current_tab(self, i):
+        """Закрытие i-той вкладки, если она не единственная"""
         if self.tabs.count() < 2:
             return
 
         self.tabs.removeTab(i)
 
     def update_title(self, browser):
+        """Обновление заголовка"""
         if browser != self.tabs.currentWidget():
             # If this signal is not from the current tab, ignore
             return
@@ -187,14 +193,15 @@ class MainWindow(QMainWindow):
         self.tabs.currentWidget().setUrl(QUrl("https://atpp.vstu.edu.ru/"))
 
     def about(self):
+        """Открытие окна о программе"""
         dlg = AboutDialog()
         dlg.exec_()
 
     def open_file(self):
+        """Открытие файла в браузере черещ вызов окна поиска"""
         filename, _ = QFileDialog.getOpenFileName(self, "Open file", "",
                                                   "Hypertext Markup Language (*.htm *.html);;"
                                                   "All files (*.*)")
-
         if filename:
             with open(filename, 'r') as f:
                 html = f.read()
@@ -203,6 +210,7 @@ class MainWindow(QMainWindow):
             self.urlbar.setText(filename)
 
     def save_file(self):
+        """Сохранение файла html через диалоговое окно сохранения"""
         filename, _ = QFileDialog.getSaveFileName(self, "Save Page As", "",
                                                   "Hypertext Markup Language (*.htm *html);;"
                                                   "All files (*.*)")
@@ -213,14 +221,17 @@ class MainWindow(QMainWindow):
                 f.write(html.encode('utf8'))
 
     def print_page(self):
+        """Вывод файла на печать через диалоговое окно печати"""
         dlg = QPrintPreviewDialog()
         dlg.paintRequested.connect(self.browser.print_)
         dlg.exec_()
 
     def navigate_home(self):
-        self.tabs.currentWidget().setUrl(QUrl(self.searchEnginepath))
+        """Вызов домашней страницы"""
+        self.tabs.currentWidget().setUrl(QUrl.fromLocalFile(self.searchEnginepath))
 
     def navigate_to_url(self):
+        """Переход по ссылке в url баре"""
         q = QUrl(self.urlbar.text())
         if q.scheme() == "":
             q.setScheme("http")
@@ -228,7 +239,7 @@ class MainWindow(QMainWindow):
         self.tabs.currentWidget().setUrl(q)
 
     def update_urlbar(self, q, browser=None):
-
+        """Обновление url бара с попыткой подключения по https"""
         if browser != self.tabs.currentWidget():
             return
 
