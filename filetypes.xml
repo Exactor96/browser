@@ -8,6 +8,7 @@
       <mapping pattern="f_000028" type="PLAIN_TEXT" />
       <mapping pattern="f_000027" type="PLAIN_TEXT" />
       <mapping pattern="data_3" type="PLAIN_TEXT" />
+      <mapping ext="pickle" type="PLAIN_TEXT" />
       <mapping ext="req" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
